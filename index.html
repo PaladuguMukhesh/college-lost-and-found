@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Lost & Found</title>
+    <!-- Modern Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary: #ec4899;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --glass-bg: rgba(15, 23, 42, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--darker);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(79, 70, 229, 0.15) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(236, 72, 153, 0.15) 0px, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-attachment: fixed;
+        }
+
+        /* Navbar */
+        nav {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-height: 100;
+            z-index: 50;
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .view {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        .view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+        }
+        
+        .btn-success { background: var(--success); }
+        .btn-danger { background: var(--danger); }
+
+        /* Grids */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Item Cards */
+        .item-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .item-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .item-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background: rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+
+        .item-content {
+            padding: 1.25rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .badge.lost { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+        .badge.found { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+        
+        .item-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .item-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+        
+        .item-meta span {
+            font-size: 1rem;
+        }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Match Card */
+        .match-card {
+            display: flex;
+            background: linear-gradient(145deg, rgba(79, 70, 229, 0.1), rgba(236, 72, 153, 0.05));
+            border: 1px solid var(--primary);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .match-half {
+            flex: 1;
+            padding: 1.5rem;
+        }
+        .match-divider {
+            width: 2px;
+            background: var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .match-icon-wrapper {
+            position: absolute;
+            background: var(--darker);
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            height: 40px;
+            width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+
+        /* Toasts */
+        #toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .toast {
+            background: var(--text-main);
+            color: var(--darker);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .text-center { text-align: center; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mt-2 { margin-top: 0.5rem; }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        <div class="brand">
+            <span class="material-icons-round">radar</span>
+            CampusFind
+        </div>
+        <div class="nav-links" id="nav-links">
+            <button class="nav-btn active" onclick="switchView('auth')">Login</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        
+        <!-- User Auth View -->
+        <div id="view-auth" class="view active">
+            <div class="glass-card" style="max-width: 400px; margin: 0 auto; margin-top: 4rem;">
+                <h2 class="text-center mb-2" id="auth-title">Welcome Back</h2>
+                <p class="text-center text-muted mb-2" id="auth-desc" style="color: var(--text-muted); margin-bottom: 2rem;">Sign in to report or claim items</p>
+                <form id="auth-form">
+                    <!-- Role hidden for user portal -->
+                    <div class="form-group" id="role-group" style="display: none;">
+                        <input type="hidden" id="auth-role" value="student">
+                    </div>
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" class="form-control" id="auth-user" placeholder="e.g. John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" class="form-control" id="auth-pass" placeholder="••••••••" required>
+                    </div>
+                    <div class="form-group" id="confirm-pass-group" style="display: none;">
+                        <label>Confirm Password</label>
+                        <input type="password" class="form-control" id="auth-confirm-pass" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn-primary" id="auth-submit-btn">
+                        <span class="material-icons-round">login</span> <span id="auth-btn-text">Sign In</span>
+                    </button>
+                    <p class="text-center mt-2" style="font-size: 0.9rem;">
+                        <span id="toggle-text">Don't have an account?</span> 
+                        <a href="javascript:void(0)" onclick="toggleAuthMode()" id="toggle-link" style="color: var(--primary); font-weight: 500;">Register</a>
+                    </p>
+                    <p class="text-center mt-2" id="admin-login-link-p" style="font-size: 0.85rem; border-top: 1px solid var(--glass-border); padding-top: 1rem; margin-top: 1.5rem;">
+                        Are you an admin? <a href="javascript:void(0)" onclick="switchView('admin-auth')" style="color: var(--secondary);">Admin Login</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <!-- Admin Auth View -->
+        <div id="view-admin-auth" class="view">
+            <div class="glass-card" style="max-width: 400px; margin: 0 auto; margin-top: 4rem; border: 1px solid var(--secondary);">
+                <div class="text-center mb-2">
+                    <span class="material-icons-round" style="font-size: 3rem; color: var(--secondary);">admin_panel_settings</span>
+                </div>
+                <h2 class="text-center mb-2">Admin Portal</h2>
+                <p class="text-center text-muted mb-2" style="margin-bottom: 2rem;">Authorized Personnel Only</p>
+                <form id="admin-auth-form">
+                    <div class="form-group">
+                        <label>Admin Username</label>
+                        <input type="text" class="form-control" id="admin-user" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" class="form-control" id="admin-pass" required>
+                    </div>
+                    <button type="submit" class="btn-primary" style="background: var(--secondary);">
+                        <span class="material-icons-round">security</span> Authenticate
+                    </button>
+                    <p class="text-center mt-2">
+                        <a href="javascript:void(0)" onclick="switchView('auth')" style="color: var(--text-muted); font-size: 0.9rem;">Return to User Login</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard View (Student) -->
+        <div id="view-dashboard" class="view">
+            <div class="flex-between">
+                <h2 id="dashboard-title">Browse Reports</h2>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn-primary" style="background: var(--danger);" onclick="switchView('report-lost')">
+                        <span class="material-icons-round">add_circle</span> Report Lost
+                    </button>
+                    <button class="btn-primary" style="background: var(--success);" onclick="switchView('report-found')">
+                        <span class="material-icons-round">add_circle</span> Report Found
+                    </button>
+                </div>
+            </div>
+            
+            <div class="form-group" style="max-width: 400px;">
+                <input type="text" id="search-bar" class="form-control" placeholder="Search items by name or category..." oninput="filterItems()">
+            </div>
+
+            <div class="grid" id="items-grid">
+                <!-- Items will be filled dynamically -->
+                <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem;">
+                   Loading reports...
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Lost/Found View -->
+        <div id="view-report-form" class="view">
+            <div class="glass-card" style="max-width: 600px; margin: 0 auto;">
+                <div class="flex-between">
+                    <h2 id="form-title">Report Item</h2>
+                    <button class="nav-btn" onclick="switchView('dashboard')">
+                        <span class="material-icons-round">arrow_back</span> Back
+                    </button>
+                </div>
+                
+                <form id="item-form">
+                    <input type="hidden" id="item-type">
+                    <div class="form-group">
+                        <label>Item Name</label>
+                        <input type="text" id="item-name" class="form-control" required placeholder="e.g. Blue Hydroflask">
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="item-category" class="form-control" required>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Clothing">Clothing</option>
+                            <option value="Accessories">Accessories</option>
+                            <option value="Books">Books</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="item-desc" class="form-control" rows="3" required placeholder="Provide details like color, brand, distinct marks..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Location (Lost/Found)</label>
+                        <input type="text" id="item-location" class="form-control" required placeholder="e.g. Library 2nd Floor">
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="item-date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Your Contact Email</label>
+                        <input type="email" id="item-email" class="form-control" required placeholder="email@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Your Phone Number</label>
+                        <input type="tel" id="item-phone" class="form-control" required placeholder="+1 234 567 890">
+                    </div>
+                    <div class="form-group">
+                        <label>Upload Image (Optional)</label>
+                        <input type="file" id="item-image" class="form-control" accept="image/*">
+                    </div>
+                    <button type="submit" class="btn-primary" style="margin-top: 1rem;">
+                        <span class="material-icons-round">send</span> Submit Report
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Admin View -->
+        <div id="view-admin" class="view">
+            <div class="flex-between">
+                <h2>Admin Dashboard</h2>
+                <div style="display: flex; gap:1rem;">
+                   <button class="nav-btn active" onclick="loadAdminMatches()">View Smart Matches</button>
+                   <button class="nav-btn" onclick="loadAdminAllItems()">All Reports</button>
+                </div>
+            </div>
+
+            <div id="admin-content">
+                <!-- Matches/Reports injected here -->
+            </div>
+        </div>
+
+        <!-- My Matches View (Student) -->
+        <div id="view-my-matches" class="view">
+            <div class="flex-between">
+                <h2>My Matches</h2>
+                <button class="nav-btn" onclick="switchView('dashboard')">
+                    <span class="material-icons-round">arrow_back</span> Back
+                </button>
+            </div>
+            <p class="text-muted mb-2">Once matched by an admin, you can see the other person's contact details here.</p>
+            <div id="my-matches-container">
+                <!-- Matches populated here -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Toasts -->
+    <div id="toast-container"></div>
+
+    <script>
+        // App State
+        let currentUser = null; // { name, role }
+        let currentItems = [];
+        let apiBase = 'http://localhost:3001/api';
+        let authMode = 'login'; // login or register
+        
+        // Setup initial Date
+        document.getElementById('item-date').valueAsDate = new Date();
+
+        // ------------------
+        // Navigation & Views
+        // ------------------
+        function switchView(viewName) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            
+            if (viewName === 'auth') {
+                document.getElementById('view-auth').classList.add('active');
+                renderNav();
+            } 
+            else if (viewName === 'admin-auth') {
+                document.getElementById('view-admin-auth').classList.add('active');
+            } 
+            else if (viewName === 'dashboard') {
+                document.getElementById('view-dashboard').classList.add('active');
+                if (currentUser) {
+                    const title = document.getElementById('dashboard-title');
+                    title.innerText = currentUser.role === 'admin' ? 'Global Campus Reports' : 'My Reports & History';
+                }
+                fetchItems();
+            }
+            else if (viewName === 'admin') {
+                document.getElementById('view-admin').classList.add('active');
+                loadAdminMatches();
+            }
+            else if (viewName === 'my-matches') {
+                document.getElementById('view-my-matches').classList.add('active');
+                fetchMyMatches();
+            }
+            else if (viewName === 'report-lost' || viewName === 'report-found') {
+                document.getElementById('view-report-form').classList.add('active');
+                const isLost = viewName === 'report-lost';
+                document.getElementById('form-title').innerText = isLost ? 'Report Lost Item' : 'Report Found Item';
+                document.getElementById('item-type').value = isLost ? 'lost' : 'found';
+                document.getElementById('item-form').reset();
+                document.getElementById('item-date').valueAsDate = new Date();
+            }
+        }
+
+        function renderNav() {
+            const navLinks = document.getElementById('nav-links');
+            if (!currentUser) {
+                navLinks.innerHTML = `<button class="nav-btn active" onclick="switchView('auth')">Login</button>`;
+            } else {
+                navLinks.innerHTML = `
+                    <span style="display:flex; align-items:center; gap:0.5rem; color:var(--text-muted); margin-right:1rem;">
+                        <span class="material-icons-round">account_circle</span> ${currentUser.name} (${currentUser.role})
+                    </span>
+                    ${currentUser.role === 'admin' 
+                        ? `<button class="nav-btn" onclick="switchView('admin')">Admin Area</button>
+                           <button class="nav-btn" onclick="switchView('dashboard')">Global Data</button>` 
+                        : `<button class="nav-btn" onclick="switchView('dashboard')">My Reports</button>
+                           <button class="nav-btn" onclick="switchView('my-matches')">My Matches</button>`}
+                    <button class="nav-btn btn-danger" onclick="logout()" style="color:white; padding: 0.25rem 0.75rem;">Logout</button>
+                `;
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            currentItems = []; // Wipe item memory on logout
+            switchView('auth');
+            showToast('Logged out successfully');
+        }
+
+        // ------------------
+        // Form Handlers
+        // ------------------
+        function toggleAuthMode() {
+            authMode = authMode === 'login' ? 'register' : 'login';
+            const title = document.getElementById('auth-title');
+            const desc = document.getElementById('auth-desc');
+            const btnText = document.getElementById('auth-btn-text');
+            const btnIcon = document.querySelector('#auth-submit-btn .material-icons-round');
+            const toggleText = document.getElementById('toggle-text');
+            const toggleLink = document.getElementById('toggle-link');
+            const confirmGroup = document.getElementById('confirm-pass-group');
+            const roleGroup = document.getElementById('role-group');
+            const adminLinkP = document.getElementById('admin-login-link-p');
+
+            if (authMode === 'register') {
+                title.innerText = 'Create Account';
+                desc.innerText = 'Join CampusFind to start reporting items';
+                btnText.innerText = 'Register';
+                btnIcon.innerText = 'person_add';
+                toggleText.innerText = 'Already have an account?';
+                toggleLink.innerText = 'Login';
+                confirmGroup.style.display = 'block';
+                roleGroup.style.display = 'none';
+                adminLinkP.style.display = 'none'; // Hide admin link on register
+                document.getElementById('auth-confirm-pass').required = true;
+            } else {
+                title.innerText = 'Welcome Back';
+                desc.innerText = 'Sign in to report or claim items';
+                btnText.innerText = 'Sign In';
+                btnIcon.innerText = 'login';
+                toggleText.innerText = "Don't have an account?";
+                toggleLink.innerText = 'Register';
+                confirmGroup.style.display = 'none';
+                roleGroup.style.display = 'none'; // Always hide role on user auth
+                adminLinkP.style.display = 'block'; // Show admin link on user login
+                document.getElementById('auth-confirm-pass').required = false;
+            }
+        }
+
+        document.getElementById('auth-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const role = document.getElementById('auth-role').value;
+            const username = document.getElementById('auth-user').value;
+            const password = document.getElementById('auth-pass').value;
+
+            if (authMode === 'register') {
+                const confirmPass = document.getElementById('auth-confirm-pass').value;
+                if (password !== confirmPass) {
+                    showToast('Passwords do not match!', 'danger');
+                    return;
+                }
+
+                try {
+                    const res = await fetch(`${apiBase}/register`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password, role })
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error || 'Registration failed');
+                    
+                    showToast('Registration successful! Please login.', 'success');
+                    toggleAuthMode();
+                } catch (err) {
+                    showToast(err.message, 'danger');
+                }
+            } else {
+                try {
+                    const res = await fetch(`${apiBase}/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password })
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error || 'Login failed');
+
+                    currentUser = { role: data.role, name: data.name };
+                    renderNav();
+                    showToast(`Welcome back, ${data.name}!`);
+                    
+                    if (data.role === 'admin') {
+                        switchView('admin');
+                    } else {
+                        switchView('dashboard');
+                    }
+                } catch (err) {
+                    showToast(err.message, 'danger');
+                    // Fallback for local dev if no server
+                    if (err.message.includes('Failed to fetch')) {
+                        console.log("Mocking login for demo...");
+                        currentUser = { role, name: username };
+                        renderNav();
+                        switchView(role === 'admin' ? 'admin' : 'dashboard');
+                    }
+                }
+            }
+        });
+
+        document.getElementById('admin-auth-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('admin-user').value;
+            const password = document.getElementById('admin-pass').value;
+
+            try {
+                const res = await fetch(`${apiBase}/admin/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Admin login failed');
+
+                currentUser = { role: 'admin', name: data.name };
+                renderNav();
+                showToast(`System Access Granted: ${data.name}`);
+                switchView('admin');
+            } catch (err) {
+                showToast(err.message, 'danger');
+            }
+        });
+
+        document.getElementById('item-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // To support actual Multer integration, we COULD use FormData:
+            /*
+            const formData = new FormData();
+            formData.append('type', document.getElementById('item-type').value);
+            ...
+            const fileInput = document.getElementById('item-image');
+            if (fileInput.files[0]) formData.append('image', fileInput.files[0]);
+            fetch(..., { body: formData })
+            */
+
+            // For Demo simplicity & robust JSON fallback
+            const newItem = {
+                type: document.getElementById('item-type').value,
+                name: document.getElementById('item-name').value,
+                category: document.getElementById('item-category').value,
+                description: document.getElementById('item-desc').value,
+                location: document.getElementById('item-location').value,
+                date: document.getElementById('item-date').value
+            };
+
+            try {
+                const res = await fetch(`${apiBase}/items`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ...newItem,
+                        username: currentUser.name,
+                        contactEmail: document.getElementById('item-email').value,
+                        contactPhone: document.getElementById('item-phone').value
+                    })
+                });
+                
+                if (res.ok) {
+                    showToast('Report submitted successfully!', 'success');
+                    switchView('dashboard');
+                } else {
+                    throw new Error('Server error');
+                }
+            } catch (err) {
+                // Mock Appending to Local Array if Fetch Fails!
+                console.log("Using local dummy state because server is unreachable.");
+                newItem._id = Date.now().toString();
+                newItem.status = 'active';
+                currentItems.unshift(newItem);
+                showToast('Report saved locally! (No Server DB Connected)', 'success');
+                switchView('dashboard');
+            }
+        });
+
+        // ------------------
+        // API Calls
+        // ------------------
+        async function fetchItems() {
+            const grid = document.getElementById('items-grid');
+            grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem;"><span class="material-icons-round" style="font-size:3rem; animation: spin 2s linear infinite;">autorenew</span><br>Loading reports...</div>`;
+            
+            try {
+                // If student, filter by their username. If admin, show all.
+                const url = currentUser && currentUser.role === 'student' 
+                    ? `${apiBase}/items?username=${currentUser.name}`
+                    : `${apiBase}/items`;
+                    
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('Network error');
+                currentItems = await res.json();
+            } catch (err) {
+                console.error("Fetch failed. Using local storage only.");
+            }
+            renderItems(currentItems);
+        }
+
+        function filterItems() {
+            const query = document.getElementById('search-bar').value.toLowerCase();
+            const filtered = currentItems.filter(i => 
+                (i.name.toLowerCase().includes(query) || 
+                 i.category.toLowerCase().includes(query) || 
+                 i.description.toLowerCase().includes(query)) &&
+                 i.status === 'active'
+            );
+            renderItems(filtered);
+        }
+
+        function renderItems(items) {
+            const grid = document.getElementById('items-grid');
+            grid.innerHTML = '';
+            
+            const activeItems = items.filter(i => {
+                // Admin sees ACTIVE only on dashboard (they have matches view for others)
+                // Student sees ALL (Active, Solved, Matched) in their personal activity
+                if (currentUser && currentUser.role === 'admin') return i.status === 'active';
+                return true; 
+            });
+            
+            if(activeItems.length === 0) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem;">No reports found.</div>`;
+                return;
+            }
+
+            activeItems.forEach(item => {
+                const isLost = item.type === 'lost';
+                const badgeClass = isLost ? 'lost' : 'found';
+                
+                grid.innerHTML += `
+                    <div class="item-card">
+                        <div class="item-img">
+                            ${item.imageUrl ? `<img src="http://localhost:3000${item.imageUrl}" style="width:100%; height:100%; object-fit:cover;" />` : '<span class="material-icons-round" style="font-size: 3rem;">image</span>'}
+                        </div>
+                        <div class="item-content">
+                            <span class="badge ${badgeClass}">${item.type.toUpperCase()}</span>
+                            <h3 class="item-title">${item.name}</h3>
+                            <p class="item-desc">${item.description}</p>
+                            
+                            <div class="item-meta"><span class="material-icons-round">category</span> ${item.category}</div>
+                            <div class="item-meta"><span class="material-icons-round">place</span> ${item.location}</div>
+                            <div class="item-meta"><span class="material-icons-round">event</span> ${new Date(item.date).toLocaleDateString()}</div>
+                            
+                            ${item.status === 'matched' ? 
+                                `<div class="badge" style="background:rgba(52, 211, 153, 0.2); color: #34d399; margin-top:0.5rem;">MATCHED BY ADMIN</div>` : ''}
+                            ${item.status === 'solved' ? 
+                                `<div class="badge" style="background:rgba(96, 165, 250, 0.2); color: #60a5fa; margin-top:0.5rem;">SOLVED / RESOLVED</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // ------------------
+        // Admin Matching features
+        // ------------------
+        async function loadAdminMatches() {
+            const content = document.getElementById('admin-content');
+            content.innerHTML = `<div style="text-align: center; padding: 4rem;"><span class="material-icons-round" style="font-size:3rem; animation: spin 2s linear infinite;">settings</span><br>Running AI Match Algorithm...</div>`;
+
+            let matches = [];
+            try {
+                const res = await fetch(`${apiBase}/matches`);
+                if (!res.ok) throw new Error('API ERROR');
+                matches = await res.json();
+            } catch(e) {
+                // Mock Matching Algorithm Client Side For Demo
+                console.log("Mocking Matches Frontend");
+                matches = mockMatchAlgorithm();
+            }
+
+            content.innerHTML = '';
+            if (matches.length === 0) {
+                 content.innerHTML = `<div style="text-align: center; padding: 4rem;">No potential matches found at this time.</div>`;
+                 return;
+            }
+
+            matches.forEach(m => {
+                content.innerHTML += `
+                    <div class="match-card">
+                        <div class="match-half">
+                            <span class="badge lost">LOST REPORT</span>
+                            <h3 class="item-title">${m.lostItem.name}</h3>
+                            <p class="item-desc">${m.lostItem.description}</p>
+                            <small class="text-muted"><span class="material-icons-round" style="font-size:12px;vertical-align:text-bottom;">place</span> ${m.lostItem.location}</small>
+                        </div>
+                        <div class="match-divider">
+                            <div class="match-icon-wrapper">
+                                <span class="material-icons-round">handshake</span>
+                            </div>
+                        </div>
+                        <div class="match-half">
+                            <span class="badge found">FOUND REPORT</span>
+                            <h3 class="item-title">${m.foundItem.name}</h3>
+                            <p class="item-desc">${m.foundItem.description}</p>
+                            <small class="text-muted"><span class="material-icons-round" style="font-size:12px;vertical-align:text-bottom;">place</span> ${m.foundItem.location}</small>
+                        </div>
+                    </div>
+                    <div style="text-align:center; margin-bottom: 2rem;">
+                        <span class="badge" style="background:rgba(245, 158, 11, 0.2); color: #fcd34d;">Match Keywords: ${m.keywords.join(", ")}</span>
+                        <div style="margin-top: 0.5rem; display:flex; justify-content:center; gap: 1rem;" id="match-actions-${m.lostItem._id}-${m.foundItem._id}">
+                            <button class="nav-btn" style="background:var(--success); color:white" onclick="approveMatch('${m.lostItem._id}', '${m.foundItem._id}', this)">Approve Match</button>
+                            <button class="nav-btn" style="background:var(--glass-bg); color:var(--danger)" onclick="rejectMatch(this)">Reject</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function mockMatchAlgorithm() {
+            // Frontend fallback matcher
+            const lostItems = currentItems.filter(i => i.type === 'lost' && i.status === 'active');
+            const foundItems = currentItems.filter(i => i.type === 'found' && i.status === 'active');
+            let m = [];
+            lostItems.forEach(l => {
+                foundItems.forEach(f => {
+                    if (l.category === f.category) {
+                        const lw = (l.name + " " + l.description).toLowerCase().split(" ");
+                        const fw = (f.name + " " + f.description).toLowerCase().split(" ");
+                        const common = lw.filter(word => word.length > 3 && fw.includes(word));
+                        if(common.length > 0) {
+                            m.push({ lostItem: l, foundItem: f, score: common.length, keywords: common });
+                        }
+                    }
+                });
+            });
+            return m.sort((a,b) => b.score - a.score);
+        }
+
+        function loadAdminAllItems() {
+            const content = document.getElementById('admin-content');
+            content.innerHTML = `<p class="mb-2">Manage all active reports below.</p>`;
+            // Reusing rendering but injected into admin-content
+            // Wait, building custom table is better.
+            let table = `
+            <div style="overflow-x:auto;">
+                <table style="width:100%; text-align:left; border-collapse: collapse; margin-top: 1rem;">
+                    <tr>
+                        <th style="padding:1rem; border-bottom:1px solid var(--glass-border)">Type</th>
+                        <th style="padding:1rem; border-bottom:1px solid var(--glass-border)">Name</th>
+                        <th style="padding:1rem; border-bottom:1px solid var(--glass-border)">Date</th>
+                        <th style="padding:1rem; border-bottom:1px solid var(--glass-border)">Status</th>
+                    </tr>
+            `;
+            currentItems.forEach(item => {
+                table += `
+                    <tr>
+                        <td style="padding:1rem; border-bottom:1px solid rgba(255,255,255,0.05)">
+                            <span class="badge ${item.type === 'lost' ? 'lost' : 'found'}">${item.type}</span>
+                        </td>
+                        <td style="padding:1rem; border-bottom:1px solid rgba(255,255,255,0.05)">${item.name}</td>
+                        <td style="padding:1rem; border-bottom:1px solid rgba(255,255,255,0.05)">${item.date}</td>
+                        <td style="padding:1rem; border-bottom:1px solid rgba(255,255,255,0.05)">${item.status}</td>
+                    </tr>
+                `;
+            });
+            table += `</table></div>`;
+            content.insertAdjacentHTML('beforeend', table);
+        }
+
+        function claimItem(id) {
+            showToast('Claim request sent! Waiting for Admin verification.', 'success');
+        }
+
+        async function approveMatch(lostId, foundId, btn) {
+            const actions = btn.closest('div');
+            actions.innerHTML = `<span class="badge" style="background:var(--success); color:white; padding: 0.5rem 1rem; border-radius: 20px;">✅ APPROVED</span>`;
+            
+            try {
+                const res = await fetch(`${apiBase}/admin/match`, { 
+                    method: 'POST', 
+                    headers: {'Content-Type': 'application/json'}, 
+                    body: JSON.stringify({ lostId, foundId })
+                });
+                if(!res.ok) throw new Error('Match failed');
+                showToast('Match officially approved!', 'success');
+            } catch(e) {
+                // local fallback
+                const l = currentItems.find(i=>i._id===lostId); if(l) { l.status='matched'; l.matchedItemId = foundId; }
+                const f = currentItems.find(i=>i._id===foundId); if(f) { f.status='matched'; f.matchedItemId = lostId; }
+                showToast('Match approved locally (Server Offline)', 'success');
+            }
+            
+            setTimeout(() => {
+                loadAdminMatches();
+            }, 1000);
+        }
+
+        function rejectMatch(btn) {
+            const actions = btn.closest('div');
+            actions.innerHTML = `<span class="badge" style="background:var(--danger); color:white; padding: 0.5rem 1rem; border-radius: 20px;">❌ REJECTED</span>`;
+            
+            const card = actions.previousElementSibling; // match-keywords
+            const matchCard = card.previousElementSibling; // the actual match-card
+            
+            setTimeout(() => {
+                matchCard.style.opacity = '0';
+                card.style.opacity = '0';
+                actions.style.opacity = '0';
+                
+                setTimeout(() => {
+                    matchCard.remove();
+                    card.remove();
+                    actions.remove();
+                    showToast('Match recommendation dismissed', 'info');
+                    
+                    const content = document.getElementById('admin-content');
+                    if (content.children.length === 0) {
+                        content.innerHTML = `<div style="text-align: center; padding: 4rem;">No potential matches found at this time.</div>`;
+                    }
+                }, 300);
+            }, 1000);
+        }
+
+        async function fetchMyMatches() {
+            const container = document.getElementById('my-matches-container');
+            container.innerHTML = '<div class="text-center p-4">Loading your matches...</div>';
+            
+            try {
+                const res = await fetch(`${apiBase}/user-matches/${currentUser.name}`);
+                if (!res.ok) throw new Error('Fetch failed');
+                const matches = await res.json();
+                
+                if (matches.length === 0) {
+                    container.innerHTML = '<div class="glass-card text-center">No matches found yet. Check back later!</div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                matches.forEach(m => {
+                    const cp = m.counterpart;
+                    container.innerHTML += `
+                        <div class="glass-card mb-2" style="background: rgba(79, 70, 229, 0.1);">
+                            <h3>Matched with: ${cp ? cp.name : 'Unknown Item'}</h3>
+                            <p class="mb-2">${cp ? cp.description : 'No description available.'}</p>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                                <div class="item-card p-2" style="background: rgba(255,255,255,0.05);">
+                                    <h4 style="color: var(--primary);">Contact Details</h4>
+                                    <p><strong>Email:</strong> ${cp ? cp.contactEmail : 'N/A'}</p>
+                                    <p><strong>Phone:</strong> ${cp ? cp.contactPhone : 'N/A'}</p>
+                                </div>
+                                <div class="flex-column" style="display: flex; flex-direction: column; justify-content: center;">
+                                    <button class="btn-primary" onclick="solveComplaint('${m.myItem._id}')">
+                                        <span class="material-icons-round">done_all</span> Mark as Solved
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (err) {
+                container.innerHTML = '<div class="glass-card text-center">Failed to load matches. Please try again.</div>';
+            }
+        }
+
+        async function solveComplaint(itemId) {
+            try {
+                const res = await fetch(`${apiBase}/items/${itemId}/solve`, { method: 'PUT' });
+                if (!res.ok) throw new Error('Solve failed');
+                showToast('Complaint marked as solved!', 'success');
+                fetchMyMatches();
+            } catch (err) {
+                showToast('Failed to mark as solved', 'danger');
+            }
+        }
+
+        // ------------------
+        // Toasts
+        // ------------------
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            
+            let icon = 'info';
+            if (type === 'success') icon = 'check_circle';
+            if (type === 'danger') icon = 'error';
+            
+            toast.innerHTML = `<span class="material-icons-round" style="color:var(--${type==='info'?'primary':type})">${icon}</span> ${message}`;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                toast.style.transition = 'all 0.3s';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+    </script>
+</body>
+</html>
